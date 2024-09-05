@@ -16,28 +16,54 @@ if uploaded_file is not None:
     except UnicodeDecodeError:
         data = pd.read_csv(uploaded_file, encoding='utf-8')  # 다른 인코딩 시도
 
-    # 전체 데이터 시각화 (히스토그램)
-    st.subheader('전체 데이터 히스토그램')
+    # 전체 데이터 시각화 (산점도)
+    st.subheader('전체 데이터 산점도')
 
-    st.write('총점 히스토그램')
-    st.bar_chart(data['총점'].value_counts().sort_index())
+    st.write('총점 산점도')
+    total_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
+        x=alt.X('반:O', title='반'),
+        y=alt.Y('총점:Q', title='총점'),
+        color='반:N',
+        tooltip=['반', '총점']
+    ).interactive()
+    st.altair_chart(total_score_scatter, use_container_width=True)
 
-    st.write('국어 점수 히스토그램')
-    st.bar_chart(data['국어'].value_counts().sort_index())
+    st.write('국어 점수 산점도')
+    korean_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
+        x=alt.X('반:O', title='반'),
+        y=alt.Y('국어:Q', title='국어 점수'),
+        color='반:N',
+        tooltip=['반', '국어']
+    ).interactive()
+    st.altair_chart(korean_score_scatter, use_container_width=True)
 
-    st.write('수학 점수 히스토그램')
-    st.bar_chart(data['수학'].value_counts().sort_index())
+    st.write('수학 점수 산점도')
+    math_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
+        x=alt.X('반:O', title='반'),
+        y=alt.Y('수학:Q', title='수학 점수'),
+        color='반:N',
+        tooltip=['반', '수학']
+    ).interactive()
+    st.altair_chart(math_score_scatter, use_container_width=True)
 
-    st.write('영어 점수 히스토그램')
-    st.bar_chart(data['영어'].value_counts().sort_index())
+    st.write('영어 점수 산점도')
+    english_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
+        x=alt.X('반:O', title='반'),
+        y=alt.Y('영어:Q', title='영어 점수'),
+        color='반:N',
+        tooltip=['반', '영어']
+    ).interactive()
+    st.altair_chart(english_score_scatter, use_container_width=True)
 
-    # 박스플롯 시각화 (반별 총점)
-    st.subheader('반별 총점 박스플롯')
-    boxplot = alt.Chart(data).mark_boxplot().encode(
+    # 반별 총점 산점도 (점 그래프)
+    st.subheader('반별 총점 산점도')
+    scatter_plot = alt.Chart(data).mark_point(size=60, filled=True).encode(
         x='반:O',
-        y='총점:Q'
-    )
-    st.altair_chart(boxplot, use_container_width=True)
+        y='총점:Q',
+        color='반:N',
+        tooltip=['반', '총점']
+    ).interactive()
+    st.altair_chart(scatter_plot, use_container_width=True)
 
     # 국어 점수 기준 상위 10명 출력
     st.subheader('국어 점수 기준 상위 10명')
@@ -66,22 +92,54 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader('총점 히스토그램')
-        st.bar_chart(filtered_data['총점'].value_counts().sort_index())
+        st.subheader('총점 산점도')
+        st.altair_chart(
+            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
+                x='반:O',
+                y='총점:Q',
+                color='반:N',
+                tooltip=['반', '총점']
+            ).interactive(),
+            use_container_width=True
+        )
 
     with col2:
-        st.subheader('국어 점수 히스토그램')
-        st.bar_chart(filtered_data['국어'].value_counts().sort_index())
+        st.subheader('국어 점수 산점도')
+        st.altair_chart(
+            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
+                x='반:O',
+                y='국어:Q',
+                color='반:N',
+                tooltip=['반', '국어']
+            ).interactive(),
+            use_container_width=True
+        )
 
     col3, col4 = st.columns(2)
 
     with col3:
-        st.subheader('수학 점수 히스토그램')
-        st.bar_chart(filtered_data['수학'].value_counts().sort_index())
+        st.subheader('수학 점수 산점도')
+        st.altair_chart(
+            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
+                x='반:O',
+                y='수학:Q',
+                color='반:N',
+                tooltip=['반', '수학']
+            ).interactive(),
+            use_container_width=True
+        )
 
     with col4:
-        st.subheader('영어 점수 히스토그램')
-        st.bar_chart(filtered_data['영어'].value_counts().sort_index())
+        st.subheader('영어 점수 산점도')
+        st.altair_chart(
+            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
+                x='반:O',
+                y='영어:Q',
+                color='반:N',
+                tooltip=['반', '영어']
+            ).interactive(),
+            use_container_width=True
+        )
 
 else:
     st.write("CSV 파일을 업로드하세요.")
