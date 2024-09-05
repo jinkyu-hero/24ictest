@@ -1,10 +1,10 @@
-import streamlit as st
-import pandas as pd
-import altair as alt
-
 # 제목과 설명
 st.title('모의고사/학력평가 원점수 데이터 시각화 대시보드  by  Aichem')
 st.write('업로드된 데이터로 반별 점수 분포와 상위 10명 학생 정보를 시각화합니다.univ 회사의 리딩 결과 파일 csv를 사용합니다.')
+
+import streamlit as st
+import pandas as pd
+import altair as alt
 
 # 파일 업로드 위젯
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
@@ -39,6 +39,33 @@ if uploaded_file is not None:
         tooltip=['반', '총점']
     ).interactive()
     st.altair_chart(box_plot, use_container_width=True)
+
+     # 국어, 수학, 영어 점수 산점도 추가
+    st.subheader('국어, 수학, 영어 점수 산점도')
+
+    korean_score_scatter = alt.Chart(data).mark_point().encode(
+        x='반:O',
+        y='국어:Q',
+        color='반:N',
+        tooltip=['반', '국어']
+    ).interactive()
+    st.altair_chart(korean_score_scatter, use_container_width=True)
+
+    math_score_scatter = alt.Chart(data).mark_point().encode(
+        x='반:O',
+        y='수학:Q',
+        color='반:N',
+        tooltip=['반', '수학']
+    ).interactive()
+    st.altair_chart(math_score_scatter, use_container_width=True)
+
+    english_score_scatter = alt.Chart(data).mark_point().encode(
+        x='반:O',
+        y='영어:Q',
+        color='반:N',
+        tooltip=['반', '영어']
+    ).interactive()
+    st.altair_chart(english_score_scatter, use_container_width=True)
 
     # 국어 점수 기준 상위 10명 출력
     st.subheader('국어 점수 기준 상위 10명')
@@ -100,7 +127,7 @@ if uploaded_file is not None:
             color='반:N'
         ).interactive(), use_container_width=True)
 
-    # 탐구 과목별 점수 시각화
+       # 탐구 과목별 점수 시각화
     st.subheader('탐구 과목별 점수 분포')
     subject_chart = alt.Chart(subject_scores).mark_boxplot().encode(
         x='과목:O',
