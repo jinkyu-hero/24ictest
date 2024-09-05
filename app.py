@@ -67,65 +67,63 @@ if uploaded_file is not None:
     ).interactive()
     st.altair_chart(english_score_scatter, use_container_width=True)
 
-    # 3. 반 선택 후 각 과목 점수 산점도
+    # 3. 반 선택 후 각 과목 점수 산점도 (한 페이지에 모두 표시)
+    st.subheader(f'반별 점수 산점도')
+
     selected_class = st.selectbox('반을 선택하세요', sorted(data['반'].unique()))
 
     # 선택된 반의 데이터 필터링
     filtered_data = data[data['반'] == selected_class]
 
-    st.subheader(f'{selected_class} 반의 점수 분포')
+    # 모든 산점도를 하나의 페이지에 나란히 표시
+    st.write(f'**{selected_class} 반의 점수 분포**')
 
-    col1, col2 = st.columns(2)
+    # 한 페이지에 반별 산점도 출력
+    scatter_chart_korean = alt.Chart(filtered_data).mark_point().encode(
+        x='반:O',
+        y='국어:Q',
+        color='반:N',
+        tooltip=['반', '국어']
+    ).interactive()
 
-    with col1:
-        st.subheader('국어 점수 산점도')
-        st.altair_chart(alt.Chart(filtered_data).mark_point().encode(
-            x='반:O',
-            y='국어:Q',
-            color='반:N'
-        ).interactive(), use_container_width=True)
+    scatter_chart_math = alt.Chart(filtered_data).mark_point().encode(
+        x='반:O',
+        y='수학:Q',
+        color='반:N',
+        tooltip=['반', '수학']
+    ).interactive()
 
-    with col2:
-        st.subheader('수학 점수 산점도')
-        st.altair_chart(alt.Chart(filtered_data).mark_point().encode(
-            x='반:O',
-            y='수학:Q',
-            color='반:N'
-        ).interactive(), use_container_width=True)
-
-    st.subheader('영어 점수 산점도')
-    st.altair_chart(alt.Chart(filtered_data).mark_point().encode(
+    scatter_chart_english = alt.Chart(filtered_data).mark_point().encode(
         x='반:O',
         y='영어:Q',
-        color='반:N'
-    ).interactive(), use_container_width=True)
+        color='반:N',
+        tooltip=['반', '영어']
+    ).interactive()
 
-    # 추가: 한국사, 탐구1, 탐구2 점수 산점도
-    st.subheader('한국사, 탐구1, 탐구2 점수 산점도')
-
-    korean_history_scatter = alt.Chart(filtered_data).mark_point().encode(
+    scatter_chart_history = alt.Chart(filtered_data).mark_point().encode(
         x='반:O',
         y='한국사:Q',
         color='반:N',
         tooltip=['반', '한국사']
     ).interactive()
-    st.altair_chart(korean_history_scatter, use_container_width=True)
 
-    explore1_scatter = alt.Chart(filtered_data).mark_point().encode(
+    scatter_chart_explore1 = alt.Chart(filtered_data).mark_point().encode(
         x='반:O',
         y='탐구1_점수:Q',
         color='탐구1_과목:N',
         tooltip=['반', '탐구1_과목', '탐구1_점수']
     ).interactive()
-    st.altair_chart(explore1_scatter, use_container_width=True)
 
-    explore2_scatter = alt.Chart(filtered_data).mark_point().encode(
+    scatter_chart_explore2 = alt.Chart(filtered_data).mark_point().encode(
         x='반:O',
         y='탐구2_점수:Q',
         color='탐구2_과목:N',
         tooltip=['반', '탐구2_과목', '탐구2_점수']
     ).interactive()
-    st.altair_chart(explore2_scatter, use_container_width=True)
+
+    # 산점도 시각화
+    st.altair_chart(scatter_chart_korean | scatter_chart_math | scatter_chart_english, use_container_width=True)
+    st.altair_chart(scatter_chart_history | scatter_chart_explore1 | scatter_chart_explore2, use_container_width=True)
 
     # 4. 탐구 과목별 점수 분포
     st.subheader('탐구 과목별 점수 분포')
@@ -139,4 +137,3 @@ if uploaded_file is not None:
 
 else:
     st.write("CSV 파일을 업로드하세요.")
-
