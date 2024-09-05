@@ -16,46 +16,21 @@ if uploaded_file is not None:
     except UnicodeDecodeError:
         data = pd.read_csv(uploaded_file, encoding='utf-8')  # 다른 인코딩 시도
 
-    # 전체 데이터 시각화 (산점도)
-    st.subheader('전체 데이터 산점도')
+    # 11열과 12열의 데이터 분리
+    data[['탐구1_점수', '탐구1_과목']] = data['탐구1'].str.split('/', expand=True)
+    data[['탐구2_점수', '탐구2_과목']] = data['탐구2'].str.split('/', expand=True)
 
-    st.write('총점 산점도')
-    total_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
-        x=alt.X('반:O', title='반'),
-        y=alt.Y('총점:Q', title='총점'),
-        color='반:N',
-        tooltip=['반', '총점']
-    ).interactive()
-    st.altair_chart(total_score_scatter, use_container_width=True)
+    # 점수 열을 숫자형으로 변환
+    data['탐구1_점수'] = pd.to_numeric(data['탐구1_점수'], errors='coerce')
+    data['탐구2_점수'] = pd.to_numeric(data['탐구2_점수'], errors='coerce')
 
-    st.write('국어 점수 산점도')
-    korean_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
-        x=alt.X('반:O', title='반'),
-        y=alt.Y('국어:Q', title='국어 점수'),
-        color='반:N',
-        tooltip=['반', '국어']
-    ).interactive()
-    st.altair_chart(korean_score_scatter, use_container_width=True)
+    # 과목별 점수 데이터프레임 생성
+    subject_scores = pd.concat([
+        data[['탐구1_과목', '탐구1_점수']].rename(columns={'탐구1_과목': '과목', '탐구1_점수': '점수'}),
+        data[['탐구2_과목', '탐구2_점수']].rename(columns={'탐구2_과목': '과목', '탐구2_점수': '점수'})
+    ])
 
-    st.write('수학 점수 산점도')
-    math_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
-        x=alt.X('반:O', title='반'),
-        y=alt.Y('수학:Q', title='수학 점수'),
-        color='반:N',
-        tooltip=['반', '수학']
-    ).interactive()
-    st.altair_chart(math_score_scatter, use_container_width=True)
-
-    st.write('영어 점수 산점도')
-    english_score_scatter = alt.Chart(data).mark_point(size=60, filled=True).encode(
-        x=alt.X('반:O', title='반'),
-        y=alt.Y('영어:Q', title='영어 점수'),
-        color='반:N',
-        tooltip=['반', '영어']
-    ).interactive()
-    st.altair_chart(english_score_scatter, use_container_width=True)
-
-# 반별 총점 박스 플롯
+    # 반별 총점 박스 플롯
     st.subheader('반별 총점 박스 플롯')
     box_plot = alt.Chart(data).mark_boxplot(size=40).encode(
         x='반:O',
@@ -63,7 +38,6 @@ if uploaded_file is not None:
         color='반:N',
         tooltip=['반', '총점']
     ).interactive()
-
     st.altair_chart(box_plot, use_container_width=True)
 
     # 국어 점수 기준 상위 10명 출력
@@ -93,54 +67,49 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader('총점 산점도')
-        st.altair_chart(
-            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
-                x='반:O',
-                y='총점:Q',
-                color='반:N',
-                tooltip=['반', '총점']
-            ).interactive(),
-            use_container_width=True
-        )
+        st.subheader('총점 박스 플롯')
+        st.altair_chart(alt.Chart(filtered_data).mark_boxplot().encode(
+            x='반:O',
+            y='총점:Q',
+            color='반:N'
+        ).interactive(), use_container_width=True)
 
     with col2:
-        st.subheader('국어 점수 산점도')
-        st.altair_chart(
-            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
-                x='반:O',
-                y='국어:Q',
-                color='반:N',
-                tooltip=['반', '국어']
-            ).interactive(),
-            use_container_width=True
-        )
+        st.subheader('국어 점수 박스 플롯')
+        st.altair_chart(alt.Chart(filtered_data).mark_boxplot().encode(
+            x='반:O',
+            y='국어:Q',
+            color='반:N'
+        ).interactive(), use_container_width=True)
 
     col3, col4 = st.columns(2)
 
     with col3:
-        st.subheader('수학 점수 산점도')
-        st.altair_chart(
-            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
-                x='반:O',
-                y='수학:Q',
-                color='반:N',
-                tooltip=['반', '수학']
-            ).interactive(),
-            use_container_width=True
-        )
+        st.subheader('수학 점수 박스 플롯')
+        st.altair_chart(alt.Chart(filtered_data).mark_boxplot().encode(
+            x='반:O',
+            y='수학:Q',
+            color='반:N'
+        ).interactive(), use_container_width=True)
 
     with col4:
-        st.subheader('영어 점수 산점도')
-        st.altair_chart(
-            alt.Chart(filtered_data).mark_point(size=60, filled=True).encode(
-                x='반:O',
-                y='영어:Q',
-                color='반:N',
-                tooltip=['반', '영어']
-            ).interactive(),
-            use_container_width=True
-        )
+        st.subheader('영어 점수 박스 플롯')
+        st.altair_chart(alt.Chart(filtered_data).mark_boxplot().encode(
+            x='반:O',
+            y='영어:Q',
+            color='반:N'
+        ).interactive(), use_container_width=True)
+
+    # 탐구 과목별 점수 시각화
+    st.subheader('탐구 과목별 점수 분포')
+    subject_chart = alt.Chart(subject_scores).mark_boxplot().encode(
+        x='과목:O',
+        y='점수:Q',
+        color='과목:N',
+        tooltip=['과목', '점수']
+    ).interactive()
+    st.altair_chart(subject_chart, use_container_width=True)
 
 else:
     st.write("CSV 파일을 업로드하세요.")
+
