@@ -6,7 +6,6 @@ import altair as alt
 st.title('모의고사/학력평가 원점수 데이터 시각화 대시보드  by  Aichem')
 st.write('업로드된 데이터로 반별 점수 분포와 상위 10명 학생 정보를 시각화합니다.univ 회사의 리딩 결과 파일 csv를 사용합니다.')
 
-
 # 파일 업로드 위젯
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
 
@@ -68,7 +67,7 @@ if uploaded_file is not None:
     ).interactive()
     st.altair_chart(english_score_scatter, use_container_width=True)
 
-    # 3. 반 선택 후 국어, 수학, 영어 점수 산점도
+    # 3. 반 선택 후 각 과목 점수 산점도
     selected_class = st.selectbox('반을 선택하세요', sorted(data['반'].unique()))
 
     # 선택된 반의 데이터 필터링
@@ -101,6 +100,33 @@ if uploaded_file is not None:
         color='반:N'
     ).interactive(), use_container_width=True)
 
+    # 추가: 한국사, 탐구1, 탐구2 점수 산점도
+    st.subheader('한국사, 탐구1, 탐구2 점수 산점도')
+
+    korean_history_scatter = alt.Chart(filtered_data).mark_point().encode(
+        x='반:O',
+        y='한국사:Q',
+        color='반:N',
+        tooltip=['반', '한국사']
+    ).interactive()
+    st.altair_chart(korean_history_scatter, use_container_width=True)
+
+    explore1_scatter = alt.Chart(filtered_data).mark_point().encode(
+        x='반:O',
+        y='탐구1_점수:Q',
+        color='탐구1_과목:N',
+        tooltip=['반', '탐구1_과목', '탐구1_점수']
+    ).interactive()
+    st.altair_chart(explore1_scatter, use_container_width=True)
+
+    explore2_scatter = alt.Chart(filtered_data).mark_point().encode(
+        x='반:O',
+        y='탐구2_점수:Q',
+        color='탐구2_과목:N',
+        tooltip=['반', '탐구2_과목', '탐구2_점수']
+    ).interactive()
+    st.altair_chart(explore2_scatter, use_container_width=True)
+
     # 4. 탐구 과목별 점수 분포
     st.subheader('탐구 과목별 점수 분포')
     subject_chart = alt.Chart(subject_scores).mark_boxplot().encode(
@@ -113,3 +139,4 @@ if uploaded_file is not None:
 
 else:
     st.write("CSV 파일을 업로드하세요.")
+
