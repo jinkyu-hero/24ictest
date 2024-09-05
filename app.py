@@ -105,5 +105,32 @@ if uploaded_file is not None:
     ).interactive()
     st.altair_chart(subject_chart, use_container_width=True)
 
+    # 5. 과목별 상위 10위 학생 정보 출력
+    st.subheader('과목별 상위 10위 학생 정보')
+
+    # 국어 상위 10명
+    top_korean = data.sort_values(by='국어', ascending=False).head(10)
+    st.write('국어 상위 10명:')
+    st.write(top_korean[['반', '이름', '국어']])
+
+    # 수학 상위 10명
+    top_math = data.sort_values(by='수학', ascending=False).head(10)
+    st.write('수학 상위 10명:')
+    st.write(top_math[['반', '이름', '수학']])
+
+    # 영어 상위 10명
+    top_english = data.sort_values(by='영어', ascending=False).head(10)
+    st.write('영어 상위 10명:')
+    st.write(top_english[['반', '이름', '영어']])
+
+    # 탐구 과목별 상위 10명 (탐구1과 탐구2 합쳐서)
+    top_explore1 = data.sort_values(by='탐구1_점수', ascending=False).head(10)
+    top_explore2 = data.sort_values(by='탐구2_점수', ascending=False).head(10)
+    st.write('탐구1 상위 10명:')
+    st.write(top_explore1[['반', '이름', '탐구1_과목', '탐구1_점수']])
+
+    st.write('탐구2 상위 10명:')
+    st.write(top_explore2[['반', '이름', '탐구2_과목', '탐구2_점수']])
+
 else:
     st.write("CSV 파일을 업로드하세요.")
