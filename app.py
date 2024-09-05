@@ -56,15 +56,15 @@ if uploaded_file is not None:
     st.altair_chart(english_score_scatter, use_container_width=True)
 
 # 반별 총점 박스 플롯
-st.subheader('반별 총점 박스 플롯')
-box_plot = alt.Chart(data).mark_boxplot(size=40).encode(
-    x='반:O',
-    y='총점:Q',
-    color='반:N',
-    tooltip=['반', '총점']
-).interactive()
+    st.subheader('반별 총점 박스 플롯')
+    box_plot = alt.Chart(data).mark_boxplot(size=40).encode(
+        x='반:O',
+        y='총점:Q',
+        color='반:N',
+        tooltip=['반', '총점']
+    ).interactive()
 
-st.altair_chart(box_plot, use_container_width=True)
+    st.altair_chart(box_plot, use_container_width=True)
 
     # 국어 점수 기준 상위 10명 출력
     st.subheader('국어 점수 기준 상위 10명')
