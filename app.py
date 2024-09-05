@@ -3,7 +3,7 @@ import pandas as pd
 import altair as alt
 
 # 제목과 설명
-st.title('모의고사/학력평가 데이터 시각화 대시보드  by  Aichem')
+st.title('모의고사/학력평가 원점수 데이터 시각화 대시보드  by  Aichem')
 st.write('업로드된 데이터로 반별 점수 분포와 상위 10명 학생 정보를 시각화합니다.univ 회사의 리딩 결과 파일 csv를 사용합니다.')
 
 # 파일 업로드 위젯
